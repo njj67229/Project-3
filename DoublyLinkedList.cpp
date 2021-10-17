@@ -115,8 +115,14 @@ void DoublyLinkedList<T>::printReverse() { //PrintReverse
 }
 
 template <class T>
-void DoublyLinkedList<T>::deleteSubsection(int lower, int upper) { //DeleteSubsection
-
+void DoublyLinkedList<T>::deleteSubsection(T lower, T upper) { //DeleteSubsection
+    NodeType<T> *temp = head;
+    for(int i = 0; i < length(); i++) {
+        if (temp -> data > lower && temp -> data < upper) {
+            deleteItem(temp -> data);
+        }
+        temp = temp -> next;
+    }
 }
 
 template <class T>
