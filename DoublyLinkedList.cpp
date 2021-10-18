@@ -1,7 +1,6 @@
 #include "DoublyLinkedList.h"
 #include <string>
-#include <map>
-#include <iterator>
+#include <iostream>
 
 using namespace std;
 
@@ -12,20 +11,26 @@ DoublyLinkedList<T>::DoublyLinkedList() { //Constructor
 
 template <class T>
 DoublyLinkedList<T>::~DoublyLinkedList() { //Destructor
-
+    NodeType<T>* temp;
+    while(head != NULL) {
+        temp = head;
+        head = head -> next;
+        delete temp;
+    }
+    len = 0;
 }
 
 template <class T>
 void DoublyLinkedList<T>::insertItem(T &item) { //InsertItem
-    T val = *item;
-    NodeType<T> *tempNode = head;
-    NodeType<T> *nodeInsert = new NodeType<T>();
+    T val = item;
+    NodeType<T>* tempNode = head;
+    NodeType<T>* nodeInsert = new NodeType<T>();
     nodeInsert -> data = val;
-    if(length() == 0) {
+    if(lengthIs() == 0) {
         head = nodeInsert;
         tail = nodeInsert;
         len++;
-    } else if (val <= tempNode -> data) {
+    } else if (val <= tempNode -> data) { //add before first value
         nodeInsert -> next = head;
         (nodeInsert -> next) -> back = nodeInsert;
         head = nodeInsert;
@@ -35,14 +40,16 @@ void DoublyLinkedList<T>::insertItem(T &item) { //InsertItem
         delete nodeInsert;
         delete tempNode;
     } else {
-        tempNode = tempNode -> next;
-        for (int i = 1; i < length(); i++) {
-            if (val <= tempNode -> data) {
+        for (int i = 0; i < lengthIs(); i++) {
+            if (val <= tempNode -> data) { //This
                 nodeInsert -> next = tempNode;
                 nodeInsert -> back = tempNode -> back;
                 tempNode -> back = nodeInsert;
+                (nodeInsert -> back) -> next = nodeInsert;
+                len++;
+                return;
             } else if (val > tempNode -> data) {
-                if (i == length() - 1) { //last node;
+                if (i == lengthIs() - 1) { // last node;
                     tempNode -> next = nodeInsert;
                     nodeInsert -> back = tempNode;
                     tail = nodeInsert;
@@ -50,6 +57,7 @@ void DoublyLinkedList<T>::insertItem(T &item) { //InsertItem
                     tempNode = NULL;
                     delete tempNode;
                     delete nodeInsert;
+                    len++;
                     return;
                 } else {
                     tempNode = tempNode -> next;
@@ -61,43 +69,52 @@ void DoublyLinkedList<T>::insertItem(T &item) { //InsertItem
 
 template <class T>
 void DoublyLinkedList<T>::deleteItem(T &item) { //DeleteItem
-    T val = *item;
-    NodeType<T> *temp = head;
-    if (length() == 0) {
+    T val = item;
+    NodeType<T>* temp = head;
+    if (lengthIs() == 0) {
         cout << "You cannot delete from an empty list" << endl;
-    } else if (length() == 1) {
+    } else if (lengthIs() == 1) {
         if (temp -> data == val) {
             delete temp;
+            len--;
+            return;
         }
-    }
-    for (int i = 0; i < length(); i++) {
-        if (temp -> data == val) {
-            if (i == 1) {
-                head = temp -> next; //Head equals temps next
-                delete temp;
-                break;
-            } else if (i == length() - 1) {
-                tail = temp -> back; //Tail equals temps prev
-                delete temp;
-                break;
-            } else {
-                (temp -> back) -> next = temp -> next;
-                delete temp;
+    } else {
+        for (int i = 0; i < lengthIs(); i++) {
+            if (temp -> data == val) {
+                if (i == 0) {
+                    head = temp -> next; //Head equals temps next
+                    len--;
+                    delete temp;
+                    return;
+                } else if (i == lengthIs() - 1) {
+                    tail = temp -> back; //Tail equals temps prev
+                    len--;
+                    delete temp;
+                    return;
+                } else {
+                    len--;
+                    (temp -> back) -> next = temp -> next;
+                    (temp -> next) -> back = temp -> back;
+                    delete temp;
+                    return;
             } //else
-        } //if
-        temp = temp -> next;
-    } //for
+            } //if
+            temp = temp -> next;
+        } //for
+    } // else
+    cout << "Item not in list!" << endl;
 }
 
 template <class T>
-void DoublyLinkedList<T>::lengthIs() const { //LengthIs
+int DoublyLinkedList<T>::lengthIs() const { //LengthIs
     return len;
 }
 
 template <class T>
 void DoublyLinkedList<T>::print() { //Print
-    NodeType<T> *temp = head;
-    for (int i = 0; i < length(); i++) {
+    NodeType<T>* temp = head;
+    for (int i = 0; i < lengthIs(); i++) {
         cout << temp -> data << " ";
         temp = temp -> next;
     } //for
@@ -106,8 +123,8 @@ void DoublyLinkedList<T>::print() { //Print
 
 template <class T>
 void DoublyLinkedList<T>::printReverse() { //PrintReverse
-    NodeType<T> *temp = tail;
-    for (int i = length(); i > 0; i--) {
+    NodeType<T>* temp = tail;
+    for (int i = lengthIs(); i > 0; i--) {
         cout << temp -> data << " ";
         temp = temp -> back;
     } //for
@@ -116,10 +133,11 @@ void DoublyLinkedList<T>::printReverse() { //PrintReverse
 
 template <class T>
 void DoublyLinkedList<T>::deleteSubsection(T lower, T upper) { //DeleteSubsection
-    NodeType<T> *temp = head;
-    for(int i = 0; i < length(); i++) {
-        if (temp -> data > lower && temp -> data < upper) {
+    NodeType<T>* temp = head;
+    for(int i = 0; i < lengthIs(); i++) {
+        if (temp -> data >= lower && temp -> data <= upper) {
             deleteItem(temp -> data);
+            i--;
         }
         temp = temp -> next;
     }
@@ -127,16 +145,12 @@ void DoublyLinkedList<T>::deleteSubsection(T lower, T upper) { //DeleteSubsectio
 
 template <class T>
 T DoublyLinkedList<T>::mode() { //Mode
-    if (length() == 0) {
-        cout << "You cannot get the mode of an empty list" << endl;
-        return -1;
-    } //if
-    NodeType<T> *temp = head;
-    T mode = head->data;
-    T curVal = head->data;
+    NodeType<T>* temp = head;
+    T mode = temp->data;
+    T curVal = temp->data;
     int count = 1;
     int max = count;
-    for (int i = 0; i < length(); i++) {
+    for (int i = 1; i < lengthIs(); i++) {
         temp = temp->next;
         if(temp->data == curVal) {
             count++;
@@ -152,13 +166,41 @@ T DoublyLinkedList<T>::mode() { //Mode
     return mode;
 }
 
-
-
 template <class T>
 void DoublyLinkedList<T>::swapAlt() { //swapAlt
-
+    if (lengthIs() > 1) {
+        NodeType<T>* temp0 = head;
+        NodeType<T>* temp1 = temp0 -> next;
+        temp0 -> next = temp1 -> next;
+        temp1 -> next = temp0;
+        head = temp1;
+        temp0 -> back = temp1;
+        if(lengthIs() > 2) {
+            (temp0 -> next) -> back = temp0;
+        }
+        if (lengthIs() > 3) {
+            temp0 = temp0 -> next;
+            temp1 = temp0 -> next;
+            for (int i = 2; i < lengthIs() - 2; i+=2) {
+                  temp0 -> next = temp1 -> next;
+                  temp1 -> next = temp0;
+                  (temp0 -> next) -> back = temp0;
+                  (temp0 -> back) -> next = temp1;
+                  temp0 -> back = temp1;
+                  temp0 = temp0 -> next;
+                  temp1 = temp0 -> next;
+            }
+            if (lengthIs() % 2 == 0) { //if even (for last case)
+                 temp0 -> next = temp1 -> next;
+                 temp1 -> next = temp0;
+                 (temp0 -> next) -> back = temp0;
+                 (temp0 -> back) -> next = temp1;
+                 temp0 -> back = temp1;
+                 tail = temp0;
+            }
+        }
+        print();
+    } else {
+        cout << "Nothing to swap" << endl;
+    } //else
 }
-
-template class DoublyLinkedList<int>;
-template class DoublyLinkedList<float>;
-template class DoublyLinkedList<string>;

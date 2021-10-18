@@ -10,9 +10,8 @@ char intro() {
 	char listType;
 	int valid{0};
 	while (valid == 0) {
-		cout << "\nEnter list type (i - int, f - float, s - std:string): ";
+		cout << "Enter list type (i - int, f - float, s - std:string): ";
 		cin >> listType;
-		cout << endl;
 		// Check for valid input
 		if (listType != 'i' && listType != 'f' && listType != 's') {
 			cout << "Invalid list type: " << listType << endl;
@@ -21,7 +20,7 @@ char intro() {
 		} // if/else
 	} // while
 	cout << "insert (i), delete (d), length (l), print (p), deleteSub (b), mode (m)," << endl;
-	cout << "printReverse (r), swapAtl (s), quit (q)" << endl;
+	cout << "printReverse (r), swapAlt (s), quit (q)\n" << endl;
 	return listType;
 } // end intro
 
@@ -30,117 +29,217 @@ void commandsI(DoublyLinkedList<int> s, char listType) {
 	char command = 0;
 	string item = "";
 	while (quit == 0) {
-		cin.clear();
+        cin.clear();
 		cout << "Enter a command: ";
 		cin >> command;
-		cout << endl;
 		if (command == 'i') { // insert
-			s.print();
 			cout << "Item to insert: ";
 			cin >> item;
-			cout << endl;
-			if (listType == 'i') {
-				int num = stoi(item);
-				s.insertItem(num); // int
-			} else if (listType == 'f') {
-				float fl = stof(item);
-				s.insertItem(fl); // float
-			} else {
-				s.insertItem(item); // string
-			} // if/else
+			int num = stoi(item);
+			s.insertItem(num); // int
 			s.print();
 		} else if (command == 'd') { // delete
-			s.print();
-			cout << "Item to delete: ";
-			cin >> item;
-			cout << endl;
-			if (listType == 'i') {
-				int num = stoi(item);
-				s.deleteItem(num); // int
-			} else if (listType == 'f') {
-				float fl = stof(item);
-				s.deleteItem(fl); // float
-			} else {
-				s.deleteItem(item); // string
-			} // if/else
-			s.print();
+            if (s.lengthIs() != 0) {
+                cout << "Item to delete: ";
+                cin >> item;
+                int num = stoi(item);
+                s.deleteItem(num); // int
+                s.print();
+            } else {
+                cout << "You cannot delete from an empty list." << endl;
+            } // if/else
 		} else if (command == 's') { // swapAlt
 		    s.swapAlt();
 		} else if (command == 'b') { // deleteSub
-			if (listType == 'i') { // int
-				int lowerBound = 0;
-				int upperBound = 0;
-				int valid = 0;
-				while (valid == 0) {
-					cout << "Enter lower bound: ";
-					cin >> lowerBound;
-					cout << endl << "Enter upper bound: ";
-					cin >> upperBound;
-					if (lowerBound <= upperBound) { // checking bound positioning
-						valid = 1;
-					} // if
-				} // while
-					cout << endl << "Orginal List: ";
-					s.print();
-					s.deleteSubsection(lowerBound, upperBound);
-					cout << "Modified List: ";
-					s.print();
-			} else if (listType == 'f') { // float
-				float lowerBound = 0;
-				float upperBound = 0;
-				int valid = 0;
-				while (valid == 0) {
-					cout << "Enter lower bound: ";
-					cin >> lowerBound;
-					cout << endl << "Enter upper bound: ";
-					cin >> upperBound;
-					if (lowerBound <= upperBound) { // checking bound positioning
-						valid = 1;
-					} // if
-				} // while
-					cout << endl << "Orginal List: ";
-					s.print();
-					s.deleteSubsection(lowerBound, upperBound);
-					cout << "Modified List: ";
-					s.print();
-			} else { // string
-			    string lowerBound = 0;
-				string upperBound = 0;
-				int valid = 0;
-				while (valid == 0) {
-					cout << "Enter lower bound: ";
-					cin >> lowerBound;
-					cout << endl << "Enter upper bound: ";
-					cin >> upperBound;
-					if (lowerBound <= upperBound) { // checking bound positioning
-						valid = 1;
-					} // if
-				} // while
-					cout << endl << "Orginal List: ";
-					s.print();
-					s.deleteSubsection(lowerBound, upperBound);
-					cout << "Modified List: ";
-					s.print();
-			} // if/else
+			int lowerBound = 0;
+			int upperBound = 0;
+			int valid = 0;
+			while (valid == 0) {
+				cout << "Enter lower bound: ";
+				cin >> lowerBound;
+				cout << "Enter upper bound: ";
+				cin >> upperBound;
+				if (lowerBound <= upperBound) { // checking bound positioning
+					valid = 1;
+				} // if
+			} // while
+			cout << endl << "Orginal List: ";
+			s.print();
+			s.deleteSubsection(lowerBound, upperBound);
+			cout << "Modified List: ";
+			s.print();
 		} else if (command == 114) { // printReverse
 			s.printReverse();
 		} else if (command == 'l') { // length
 			cout << "List length is " << s.lengthIs() << endl;
 		} else if (command == 'm') { // mode
-			s.print();
-			cout << "Mode: " << s.mode();
+            if (s.lengthIs() == 0) {
+                cout << "You cannot get the mode of an empty list" << endl;
+            } else {
+                s.print();
+                cout << "Mode: " << s.mode();
+            } // if/else
 		} else if (command == 'p') { // print
 			s.print();
 		} else if (command == 'q') { // quit
 			cout << "Quitting program..." << endl;
 			quit = 1;
+            s.~DoublyLinkedList();
+            exit(0);
 		} else {
 			cout << "Invalid command, try again!" << endl;
 		} // if/else
+        while (cin.peek() != '\n'){
+            cin.ignore(1);
+         } // while
+		item == "";
+        cout << endl;
+	} // while
+} // end commandsI
+
+void commandsF(DoublyLinkedList<float> s, char listType) {
+    int quit = 0;
+	char command = 0;
+	string item = "";
+	while (quit == 0) {
+		cin.clear();
+		cout << "Enter a command: ";
+		cin >> command;
+		if (command == 'i') { // insert
+			cout << "Item to insert: ";
+			cin >> item;
+			float fl = stof(item);
+			s.insertItem(fl); // float
+			s.print();
+		} else if (command == 'd') { // delete
+            if (s.lengthIs() != 0) {
+                cout << "Item to delete: ";
+                cin >> item;
+                float fl = stof(item);
+                s.deleteItem(fl); // float
+                s.print();
+            } else {
+                cout << "You cannot delete from an empty list." << endl;
+            } // if/else
+		} else if (command == 's') { // swapAlt
+		    s.swapAlt();
+		} else if (command == 'b') { // deleteSub
+			float lowerBound = 0;
+			float upperBound = 0;
+			int valid = 0;
+			while (valid == 0) {
+				cout << "Enter lower bound: ";
+				cin >> lowerBound;
+				cout << "Enter upper bound: ";
+				cin >> upperBound;
+				if (lowerBound <= upperBound) { // checking bound positioning
+					valid = 1;
+				} // if
+			} // while
+			cout << endl << "Orginal List: ";
+			s.print();
+			s.deleteSubsection(lowerBound, upperBound);
+			cout << "Modified List: ";
+			s.print();
+		} else if (command == 114) { // printReverse
+			s.printReverse();
+		} else if (command == 'l') { // length
+			cout << "List length is " << s.lengthIs() << endl;
+		} else if (command == 'm') { // mode
+            if (s.lengthIs() == 0) {
+                cout << "You cannot get the mode of an empty list" << endl;
+            } else {
+                s.print();
+                cout << "Mode: " << s.mode();
+            } // if/else
+		} else if (command == 'p') { // print
+			s.print();
+		} else if (command == 'q') { // quit
+			cout << "Quitting program..." << endl;
+			quit = 1;
+            s.~DoublyLinkedList();
+            exit(0);
+		} else {
+			cout << "Invalid command, try again!" << endl;
+		} // if/else
+        while (cin.peek() != '\n'){
+            cin.ignore(1);
+        } // while
+        cout << endl;
 		item == "";
 	} // while
-} //end commands
+} // end commandsF
 
+void commandsS(DoublyLinkedList<string> s, char listType) {
+    int quit = 0;
+	char command = 0;
+	string item = "";
+	while (quit == 0) {
+		cin.clear();
+		cout << "Enter a command: ";
+		cin >> command;
+		if (command == 'i') { // insert
+			cout << "Item to insert: ";
+			cin >> item;
+			s.insertItem(item); // string
+			s.print();
+		} else if (command == 'd') { // delete
+            if (s.lengthIs() != 0) {
+                cout << "Item to delete: ";
+                cin >> item;
+                s.deleteItem(item); // string
+                s.print();
+            } else {
+                cout << "You cannot delete from an empty list." << endl;
+            } // if/else
+		} else if (command == 's') { // swapAlt
+		    s.swapAlt();
+		} else if (command == 'b') { // deleteSub
+			string lowerBound = 0;
+			string upperBound = 0;
+			int valid = 0;
+			while (valid == 0) {
+				cout << "Enter lower bound: ";
+				cin >> lowerBound;
+				cout << "Enter upper bound: ";
+				cin >> upperBound;
+				if (lowerBound <= upperBound) { // checking bound positioning
+					valid = 1;
+				} // if
+			} // while
+			cout << endl << "Orginal List: ";
+			s.print();
+			s.deleteSubsection(lowerBound, upperBound);
+			cout << "Modified List: ";
+			s.print();
+		} else if (command == 114) { // printReverse
+			s.printReverse();
+		} else if (command == 'l') { // length
+			cout << "List length is " << s.lengthIs() << endl;
+		} else if (command == 'm') { // mode
+            if (s.lengthIs() == 0) {
+                cout << "You cannot get the mode of an empty list" << endl;
+            } else {
+                s.print();
+                cout << "Mode: " << s.mode();
+            } // if/else
+		} else if (command == 'p') { // print
+			s.print();
+		} else if (command == 'q') { // quit
+			cout << "Quitting program..." << endl;
+			quit = 1;
+            s.~DoublyLinkedList();
+            exit(0);
+		} else {
+			cout << "Invalid command, try again!" << endl;
+		} // if/else
+        while (cin.peek() != '\n'){
+            cin.ignore(1);
+        } // while
+        cout << endl;
+		item == "";
+	} // while
+} //end commandsS
 
 void makeList(string file, char listType) {
 	ifstream libFile;
@@ -194,7 +293,7 @@ void makeList(string file, char listType) {
 			s.insertItem(fl);
 			item = "";
 		} // if
-        commands(s, listType);
+        commandsF(s, listType);
 	} // if (float)
 	if (listType == 's') { // if string list
         DoublyLinkedList<string> s;
@@ -210,7 +309,7 @@ void makeList(string file, char listType) {
 			s.insertItem(item);
 			item = "";
 		} // if
-        commands(s, listType);
+        commandsS(s, listType);
 	} // if (string)
 	libFile.close();
 } // end makeList
